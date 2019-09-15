@@ -1,14 +1,15 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { WebSocketContext } from "../context/websocket-context";
-import { useContext } from "react";
-import { Switch, Slider } from "@material-ui/core";
-import { ServoService } from "../services/servo-service";
-import { useInjector } from "../hooks/use-injector";
-import { sleepAsync, debounce } from "@sensenet/client-utils";
+import React, { useState, useCallback, useEffect } from 'react';
+import { WebSocketContext } from '../context/websocket-context';
+import { useContext } from 'react';
+import { Switch, Slider } from '@material-ui/core';
+import { ServoService } from '../services/servo-service';
+import { useInjector } from '../hooks/use-injector';
+import { sleepAsync, debounce } from '@sensenet/client-utils';
+import { QualitySelector } from '../components/quality-selector';
 
 export const Camera: React.FC = () => {
   const ctx = useContext(WebSocketContext);
-  const [imgUrl] = useState("http://" + new URL(ctx.socket.url).host + "/cam");
+  const [imgUrl] = useState('http://' + new URL(ctx.socket.url).host + '/cam');
   const [imgLoadUrl, setImgLoadUrl] = useState(imgUrl);
 
   const injector = useInjector();
@@ -36,9 +37,9 @@ export const Camera: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    window.addEventListener("gamepadconnected", onGamepadConnected);
+    window.addEventListener('gamepadconnected', onGamepadConnected);
     return () =>
-      window.removeEventListener("gamepadconnected", onGamepadConnected);
+      window.removeEventListener('gamepadconnected', onGamepadConnected);
   }, [onGamepadConnected, gamepad]);
 
   const updateHorizontalServoValue = useCallback(
@@ -76,25 +77,26 @@ export const Camera: React.FC = () => {
   return (
     <div
       style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-evenly",
-        flexDirection: "column"
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        flexDirection: 'column'
       }}
     >
       <div
         style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
       >
+        <QualitySelector />
         <Switch
           onChange={(_ev, val) => {
-            ctx.safeSend(`flashlight ${val ? "on" : "off"}`);
+            ctx.safeSend(`flashlight ${val ? 'on' : 'off'}`);
           }}
         />
         <Slider
@@ -108,35 +110,44 @@ export const Camera: React.FC = () => {
       </div>
       <div
         style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center"
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          flexShrink: 1
         }}
       >
         <img
-          style={{ width: "55%", transform: "rotate(90deg)" }}
+          style={{
+            objectFit: 'contain',
+            width: '100%',
+            height: '100%',
+            background: 'radial-gradient(black, transparent)'
+          }}
           src={imgLoadUrl}
           alt="cameraImage"
           onLoad={async () => {
-            const newUrl = imgUrl + "?d=" + Math.random();
+            const newUrl = imgUrl + '?d=' + Math.random();
             setImgLoadUrl(newUrl);
           }}
           onError={async () => {
-            const newUrl = imgUrl + "?d=" + Math.random();
+            const newUrl = imgUrl + '?d=' + Math.random();
             await sleepAsync(1500);
             setImgLoadUrl(newUrl);
           }}
         />
-        <Slider
-          min={-1}
-          max={1}
-          step={0.01}
-          value={-verticalServo.percentage}
-          onChange={updateVerticalServoValue}
-          valueLabelDisplay="auto"
-          orientation="vertical"
-        />
+        <div>
+          <Slider
+            min={-1}
+            max={1}
+            step={0.01}
+            value={-verticalServo.percentage}
+            onChange={updateVerticalServoValue}
+            valueLabelDisplay="auto"
+            orientation="vertical"
+          />
+        </div>
       </div>
     </div>
   );

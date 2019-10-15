@@ -1,5 +1,5 @@
-import { useContext, useState, useEffect } from "react";
-import { WebSocketContext } from "../context/websocket-context";
+import { useContext, useState, useEffect } from 'react';
+import { WebSocketContext } from '../context/websocket-context';
 
 export const useMovement = () => {
   const socket = useContext(WebSocketContext);
@@ -10,8 +10,8 @@ export const useMovement = () => {
   const [throttleSensitivity, setThrottleSensitivity] = useState(4096);
   const [sensitivity, setSensitivity] = useState(1);
 
-  const [motorsValue, setMotorsValue] = useState("");
-  const [lastSentMotorsValue, setLastSentMotorsValue] = useState("");
+  const [motorsValue, setMotorsValue] = useState('');
+  const [lastSentMotorsValue, setLastSentMotorsValue] = useState('');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,7 +19,7 @@ export const useMovement = () => {
         setLastSentMotorsValue(motorsValue);
         socket.safeSend(motorsValue);
       }
-    }, 50);
+    }, 100);
     return () => clearInterval(interval);
   }, [lastSentMotorsValue, motorsValue, socket]);
 
@@ -56,8 +56,8 @@ export const useMovement = () => {
     ];
 
     setMotorsValue(
-      "motor " +
-        values.map(v => `${v.channel}=${Math.round(v.value)}`).join(";")
+      'motor ' +
+        values.map(v => `${v.channel}=${Math.round(v.value)}`).join(';')
     );
   }, [
     sensitivity,

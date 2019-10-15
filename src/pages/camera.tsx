@@ -6,6 +6,7 @@ import { ServoService } from '../services/servo-service';
 import { useInjector } from '../hooks/use-injector';
 import { sleepAsync, debounce } from '@sensenet/client-utils';
 import { QualitySelector } from '../components/quality-selector';
+import { Movement } from './movement';
 
 export const Camera: React.FC = () => {
   const ctx = useContext(WebSocketContext);
@@ -93,7 +94,6 @@ export const Camera: React.FC = () => {
           justifyContent: 'center'
         }}
       >
-        <QualitySelector />
         <Switch
           onChange={(_ev, val) => {
             ctx.safeSend(`flashlight ${val ? 'on' : 'off'}`);
@@ -107,6 +107,7 @@ export const Camera: React.FC = () => {
           onChange={updateHorizontalServoValue}
           valueLabelDisplay="auto"
         />
+        <QualitySelector />
       </div>
       <div
         style={{
@@ -137,7 +138,7 @@ export const Camera: React.FC = () => {
             setImgLoadUrl(newUrl);
           }}
         />
-        <div>
+        <div style={{ height: '100%' }}>
           <Slider
             min={-1}
             max={1}
@@ -148,6 +149,15 @@ export const Camera: React.FC = () => {
             orientation="vertical"
           />
         </div>
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          width: 'calc(100% - 4em)',
+          height: 'calc(100% - 13em)'
+        }}
+      >
+        <Movement />
       </div>
     </div>
   );
